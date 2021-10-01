@@ -6,7 +6,7 @@ A 2D platformer class for godot.
 
 1. Add platformer_controller.gd to your project
 2. Type `extends PlatformerController2D` to the top of your script
-3. Add these input mappings in your project settings
+3. Add these input mappings in your project settings (or you can change the input variables in the inspector)
     - "move_left"
     - "move_right"
     - "jump"
@@ -69,3 +69,9 @@ You can still jump this many seconds after falling off a ledge.
 `jump_window`\
 Pressing jump this many seconds before hitting the ground will still make you jump.\
 Note: This is only needed when can_hold_jump is off.
+
+
+`input_left`
+`input_right`
+`input_jump`
+ Set these to the names of your actions in the Input Map

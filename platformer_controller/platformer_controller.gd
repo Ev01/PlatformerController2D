@@ -2,6 +2,11 @@ extends KinematicBody2D
 
 class_name PlatformerController2D
 
+# Set these to the name of your action (in the Input Map)
+export var input_left : String = "move_left"
+export var input_right : String = "move_right"
+export var input_jump : String = "jump"
+
 # The max jump height in pixels (holding jump)
 export var max_jump_height = 150
 # The minimum jump height (tapping jump)
@@ -22,6 +27,8 @@ export var coyote_time : float = 0.1
 # Only neccessary when can_hold_jump is off
 # Pressing jump this many seconds before hitting the ground will still make you jump
 export var jump_window : float = 0.1
+
+
 
 
 # not used
@@ -122,15 +129,15 @@ func _physics_process(delta):
 	if not coyote_timer.is_stopped():
 		jumps_left = max_jump_amount
 	
-	if Input.is_action_pressed("move_left"):
+	if Input.is_action_pressed(input_left):
 		acc.x = -max_acceleration
-	if Input.is_action_pressed("move_right"):
+	if Input.is_action_pressed(input_right):
 		acc.x = max_acceleration
 	
 	
 	# Check for ground jumps when we can hold jump
 	if can_hold_jump:
-		if Input.is_action_pressed("jump"):
+		if Input.is_action_pressed(input_jump):
 			# Dont use double jump when holding down
 			if is_on_floor():
 				jump()
@@ -141,7 +148,7 @@ func _physics_process(delta):
 			jump()
 	
 	# Check for jumps in the air
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed(input_jump):
 		holding_jump = true
 		jump_window_timer.start()
 		
@@ -150,7 +157,7 @@ func _physics_process(delta):
 			jump()
 		
 	
-	if Input.is_action_just_released("jump"):
+	if Input.is_action_just_released(input_jump):
 		holding_jump = false
 	
 	

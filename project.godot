@@ -20,7 +20,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="PlatformerController"
+config/name="PluginsTesting"
 run/main_scene="res://DemoScene.tscn"
 config/icon="res://icon.png"
 
