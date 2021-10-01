@@ -71,7 +71,7 @@ Pressing jump this many seconds before hitting the ground will still make you ju
 Note: This is only needed when can_hold_jump is off.
 
 
-`input_left`
-`input_right`
-`input_jump`
+`input_left`\
+`input_right`\
+`input_jump`\
  Set these to the names of your actions in the Input Map
