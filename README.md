@@ -66,7 +66,7 @@ If this is off, you have to press jump down every time you land. If its on you c
 You can still jump this many seconds after falling off a ledge.
 
 
-`jump_window`\
+`jump_buffer`\
 Pressing jump this many seconds before hitting the ground will still make you jump.\
 Note: This is only needed when can_hold_jump is off.
 

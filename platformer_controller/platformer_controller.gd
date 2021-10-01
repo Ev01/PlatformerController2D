@@ -26,7 +26,7 @@ export var can_hold_jump : bool = false
 export var coyote_time : float = 0.1
 # Only neccessary when can_hold_jump is off
 # Pressing jump this many seconds before hitting the ground will still make you jump
-export var jump_window : float = 0.1
+export var jump_buffer : float = 0.1
 
 
 
@@ -53,7 +53,7 @@ var vel = Vector2()
 var acc = Vector2()
 
 onready var coyote_timer = Timer.new()
-onready var jump_window_timer = Timer.new()
+onready var jump_buffer_timer = Timer.new()
 
 func _ready():
 	default_gravity = calculate_gravity(max_jump_height, jump_duration)
@@ -68,9 +68,9 @@ func _ready():
 	coyote_timer.wait_time = coyote_time
 	coyote_timer.one_shot = true
 	
-	add_child(jump_window_timer)
-	jump_window_timer.wait_time = jump_window
-	jump_window_timer.one_shot = true
+	add_child(jump_buffer_timer)
+	jump_buffer_timer.wait_time = jump_buffer
+	jump_buffer_timer.one_shot = true
 	
 
 func calculate_gravity(max_jump_height, jump_duration):
@@ -144,13 +144,13 @@ func _physics_process(delta):
 	
 	# Check for ground jumps when we cannot hold jump
 	if not can_hold_jump:
-		if not jump_window_timer.is_stopped() and is_on_floor():
+		if not jump_buffer_timer.is_stopped() and is_on_floor():
 			jump()
 	
 	# Check for jumps in the air
 	if Input.is_action_just_pressed(input_jump):
 		holding_jump = true
-		jump_window_timer.start()
+		jump_buffer_timer.start()
 		
 		# Only jump in the air when press the button down, code above already jumps when we are grounded
 		if not is_on_floor():
