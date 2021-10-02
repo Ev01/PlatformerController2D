@@ -20,6 +20,14 @@ A 2D platformer class for godot.
 - Defining jump height and duration (as opposed to setting gravity and jump velocity)
 - Assymetrical jumps (falling faster than rising)
 
+<img src="https://github.com/Ev01/PlatformerController2D/raw/assets/jumping.GIF" width="500">| <img src="https://github.com/Ev01/PlatformerController2D/raw/assets/jump_duration.GIF" width="500"> | <img src="https://github.com/Ev01/PlatformerController2D/raw/assets/jump_height.GIF" width="500">
+--|--|--
+
+
+
+
+
+
 ## Customization / Export variables
 There are many value that you can change in the inspector:
 
