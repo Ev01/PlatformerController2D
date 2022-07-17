@@ -60,9 +60,6 @@ func _init():
 
 
 func _ready():
-	print("double vel = ", double_jump_velocity)
-	print("jump vel = ", jump_velocity)
-	
 	add_child(coyote_timer)
 	coyote_timer.wait_time = coyote_time
 	coyote_timer.one_shot = true
@@ -170,7 +167,6 @@ func jump():
 	if jumps_left == max_jump_amount and coyote_timer.is_stopped():
 		# Your first jump must be used when on the ground
 		# If you fall off the ground and then jump you will be using you second jump
-		print("no")
 		jumps_left -= 1
 		
 	if jumps_left > 0:
