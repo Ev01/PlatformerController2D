@@ -56,7 +56,8 @@ func _init():
 	default_gravity = calculate_gravity(max_jump_height, jump_duration)
 	jump_velocity = calculate_jump_velocity(max_jump_height, jump_duration)
 	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
-	release_gravity_multiplier = calculate_release_gravity_multiplier(jump_velocity, min_jump_height)
+	release_gravity_multiplier = calculate_release_gravity_multiplier(
+		jump_velocity, min_jump_height, default_gravity)
 
 
 func _ready():
@@ -126,30 +127,30 @@ func _physics_process(delta):
 
 
 
-func calculate_gravity(max_jump_height, jump_duration):
+func calculate_gravity(p_max_jump_height, p_jump_duration):
 	# Calculates the desired gravity by looking at our jump height and jump duration
 	# Formula is from this video https://www.youtube.com/watch?v=hG9SzQxaCm8
-	return (-2 * max_jump_height) / pow(jump_duration, 2)
+	return (-2 *p_max_jump_height) / pow(p_jump_duration, 2)
 
 
-func calculate_jump_velocity(max_jump_height, jump_duration):
+func calculate_jump_velocity(p_max_jump_height, p_jump_duration):
 	# Calculates the desired jump velocity by lookihg at our jump height and jump duration
-	return (2 * max_jump_height) / (jump_duration)
+	return (2 * p_max_jump_height) / (p_jump_duration)
 
 
-func calculate_jump_velocity2(max_jump_height, gravity):
+func calculate_jump_velocity2(p_max_jump_height, p_gravity):
 	# Calculates jump velocity from jump height and gravity
 	# formula from 
 	# https://sciencing.com/acceleration-velocity-distance-7779124.html#:~:text=in%20every%20step.-,Starting%20from%3A,-v%5E2%3Du
-	return sqrt(-2 * gravity * max_jump_height)
+	return sqrt(-2 * p_gravity * p_max_jump_height)
 
 
-func calculate_release_gravity_multiplier(jump_velocity, min_jump_height):
+func calculate_release_gravity_multiplier(p_jump_velocity, p_min_jump_height, p_gravity):
 	# Calculates the gravity when the key is released based on the minimum jump height and jump velocity
 	# Formula is from this website https://sciencing.com/acceleration-velocity-distance-7779124.html
-	var release_gravity = 0 - pow(jump_velocity, 2) / (2 * min_jump_height)
-	print(min_jump_height)
-	return release_gravity / default_gravity
+	var release_gravity = 0 - pow(p_jump_velocity, 2) / (2 * p_min_jump_height)
+	print(p_min_jump_height)
+	return release_gravity / p_gravity
 
 
 func calculate_friction(time_to_max):
@@ -158,9 +159,9 @@ func calculate_friction(time_to_max):
 	return 1 - (2.30259 / time_to_max)
 
 
-func calculate_speed(max_speed, friction):
+func calculate_speed(p_max_speed, p_friction):
 	# Formula from https://www.reddit.com/r/gamedev/comments/bdbery/comment/ekxw9g4/?utm_source=share&utm_medium=web2x&context=3	
-	return (max_speed / friction) - max_speed
+	return (p_max_speed / p_friction) - p_max_speed
 
 
 func jump():
@@ -186,7 +187,8 @@ func set_max_jump_height(value):
 	default_gravity = calculate_gravity(max_jump_height, jump_duration)
 	jump_velocity = calculate_jump_velocity(max_jump_height, jump_duration)
 	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
-	release_gravity_multiplier = calculate_release_gravity_multiplier(jump_velocity, min_jump_height)
+	release_gravity_multiplier = calculate_release_gravity_multiplier(
+		jump_velocity, min_jump_height, default_gravity)
 
 
 func set_jump_duration(value):
@@ -195,12 +197,14 @@ func set_jump_duration(value):
 	default_gravity = calculate_gravity(max_jump_height, jump_duration)
 	jump_velocity = calculate_jump_velocity(max_jump_height, jump_duration)
 	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
-	release_gravity_multiplier = calculate_release_gravity_multiplier(jump_velocity, min_jump_height)
+	release_gravity_multiplier = calculate_release_gravity_multiplier(
+		jump_velocity, min_jump_height, default_gravity)
 
 
 func set_min_jump_height(value):
 	min_jump_height = value
-	release_gravity_multiplier = calculate_release_gravity_multiplier(jump_velocity, min_jump_height)
+	release_gravity_multiplier = calculate_release_gravity_multiplier(
+		jump_velocity, min_jump_height, default_gravity)
 
 
 func set_double_jump_height(value):
