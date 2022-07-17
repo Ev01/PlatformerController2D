@@ -29,12 +29,9 @@ export var coyote_time : float = 0.1
 export var jump_buffer : float = 0.1
 
 
-
-
 # not used
 var max_speed = 100
 var acceleration_time = 10
-
 
 
 # These will be calcualted automatically
@@ -43,7 +40,6 @@ var jump_velocity : float
 var double_jump_velocity : float
 # Multiplies the gravity by this when we release jump
 var release_gravity_multiplier : float
-
 
 
 var jumps_left : int
@@ -55,12 +51,15 @@ var acc = Vector2()
 onready var coyote_timer = Timer.new()
 onready var jump_buffer_timer = Timer.new()
 
-func _ready():
+
+func _init():
 	default_gravity = calculate_gravity(max_jump_height, jump_duration)
 	jump_velocity = calculate_jump_velocity(max_jump_height, jump_duration)
 	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
 	release_gravity_multiplier = calculate_release_gravity_multiplier(jump_velocity, min_jump_height)
-	
+
+
+func _ready():
 	print("double vel = ", double_jump_velocity)
 	print("jump vel = ", jump_velocity)
 	
@@ -152,6 +151,7 @@ func calculate_release_gravity_multiplier(jump_velocity, min_jump_height):
 	# Calculates the gravity when the key is released based on the minimum jump height and jump velocity
 	# Formula is from this website https://sciencing.com/acceleration-velocity-distance-7779124.html
 	var release_gravity = 0 - pow(jump_velocity, 2) / (2 * min_jump_height)
+	print(min_jump_height)
 	return release_gravity / default_gravity
 
 
