@@ -2,6 +2,12 @@
 
 A 2D platformer class for godot.
 
+## Changelog
+### Version 1.0.1
+- Updated to Godot 3.4
+- Fixed division by zero error when changing min jump height
+- Other minor fixes
+
 ## Installation
 
 1. Add platformer_controller.gd to your project
