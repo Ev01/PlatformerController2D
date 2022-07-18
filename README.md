@@ -25,60 +25,44 @@ A 2D platformer class for godot.
 
 
 
-
-
-
 ## Customization / Export variables
-There are many value that you can change in the inspector:
+Here are the values that you can change in the inspector:
 
-
-`max_jump_height`\
+### max_jump_height
 The max jump height in pixels. You reach this when you hold down jump.
 
-
-`min_jump_height`\
+### Min Jump Height
 The minimum jump height (tapping jump).
 
-
-
-`double_jump_height`\
+### Double Jump Height
 The height of your jump in the air (i.e. double jump, triple jump etc.).
 
-
-
-`jump_duration`\
+### Jump Duration
 How long it takes to get to the peak of the jump (in seconds).
 
-
-`falling_gravity_multiplier`\
+### Falling Gravity Multiplier
 Multiplies the gravity by this while falling.
 
-
-`max_jump_amount`\
+### Max Jump Amount
 How many times you can jump before hitting the ground. Set this to 2 for a double jump.
 
-
-`max_acceleration`\
+### Max Acceleration
 How much you accelerate when you hold left or right (in pixels/sec^2).
 
-
-`friction`\
+### Friction
 The higher this number, the more friction is on your character.
 
-
-`can_hold_jump`\
+### Can Hold Jump
 If this is off, you have to press jump down every time you land. If its on you can keep it held.
 
-
-`coyote_time`\
+### Coyote Time
 You can still jump this many seconds after falling off a ledge.
 
-
-`jump_buffer`\
+### Jump Buffer
 Pressing jump this many seconds before hitting the ground will still make you jump.\
 Note: This is only needed when can_hold_jump is off.
 
-
+### Input Variables
 `input_left`\
 `input_right`\
 `input_jump`\
