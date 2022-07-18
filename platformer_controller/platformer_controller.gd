@@ -149,7 +149,6 @@ func calculate_release_gravity_multiplier(p_jump_velocity, p_min_jump_height, p_
 	# Calculates the gravity when the key is released based on the minimum jump height and jump velocity
 	# Formula is from this website https://sciencing.com/acceleration-velocity-distance-7779124.html
 	var release_gravity = 0 - pow(p_jump_velocity, 2) / (2 * p_min_jump_height)
-	print(p_min_jump_height)
 	return release_gravity / p_gravity
 
 
