@@ -8,13 +8,53 @@ class_name PlatformerController2D
 @export var input_jump : String = "jump"
 
 # The max jump height in pixels (holding jump)
-@export var max_jump_height = 150 : set = set_max_jump_height
+var _max_jump_height: float = 150
+@export var max_jump_height: float: 
+	get:
+		return _max_jump_height
+	set(value):
+		_max_jump_height = value
+	
+		default_gravity = calculate_gravity(_max_jump_height, jump_duration)
+		jump_velocity = calculate_jump_velocity(_max_jump_height, jump_duration)
+		double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
+		release_gravity_multiplier = calculate_release_gravity_multiplier(
+				jump_velocity, min_jump_height, default_gravity)
+			
 # The minimum jump height (tapping jump)
-@export var min_jump_height = 40 : set = set_min_jump_height
+var _min_jump_height: float = 40
+@export var min_jump_height: float: 
+	get:
+		return _min_jump_height
+	set(value):
+		_min_jump_height = value
+		release_gravity_multiplier = calculate_release_gravity_multiplier(
+				jump_velocity, min_jump_height, default_gravity)
+
+
 # The height of your jump in the air
-@export var double_jump_height = 100 : set = set_double_jump_height
+var _double_jump_height: float = 100
+@export var double_jump_height: float:
+	get:
+		return _double_jump_height
+	set(value):
+		_double_jump_height = value
+		double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
+		
 # How long it takes to get to the peak of the jump in seconds
-@export var jump_duration = 0.3 : set = set_jump_duration
+var _jump_duration: float = 0.3
+@export var jump_duration: float:
+	get:
+		return _jump_duration
+	set(value):
+		_jump_duration = value
+	
+		default_gravity = calculate_gravity(max_jump_height, jump_duration)
+		jump_velocity = calculate_jump_velocity(max_jump_height, jump_duration)
+		double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
+		release_gravity_multiplier = calculate_release_gravity_multiplier(
+				jump_velocity, min_jump_height, default_gravity)
+		
 # Multiplies the gravity by this while falling
 @export var falling_gravity_multiplier = 1.5
 # Set to 2 for double jump
@@ -179,36 +219,3 @@ func jump():
 	
 	
 	coyote_timer.stop()
-
-
-func set_max_jump_height(value):
-	max_jump_height = value
-	
-	default_gravity = calculate_gravity(max_jump_height, jump_duration)
-	jump_velocity = calculate_jump_velocity(max_jump_height, jump_duration)
-	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
-	release_gravity_multiplier = calculate_release_gravity_multiplier(
-		jump_velocity, min_jump_height, default_gravity)
-
-
-func set_jump_duration(value):
-	jump_duration = value
-	
-	default_gravity = calculate_gravity(max_jump_height, jump_duration)
-	jump_velocity = calculate_jump_velocity(max_jump_height, jump_duration)
-	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
-	release_gravity_multiplier = calculate_release_gravity_multiplier(
-		jump_velocity, min_jump_height, default_gravity)
-
-
-func set_min_jump_height(value):
-	min_jump_height = value
-	release_gravity_multiplier = calculate_release_gravity_multiplier(
-		jump_velocity, min_jump_height, default_gravity)
-
-
-func set_double_jump_height(value):
-	double_jump_height = value
-	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
-
-	
