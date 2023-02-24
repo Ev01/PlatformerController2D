@@ -1,0 +1,8 @@
+2a60927148abd1d33b818b535e306557
+::res://::1677276348
+default_env.tres::Environment::-1::1677276303::0::1::::<><>::
+DemoScene.tscn::PackedScene::-1::1677276303::0::1::::<><>::res://platformer_controller/platformer_controller.gd<>res://icon.png
+icon.png::CompressedTexture2D::7782751385112590858::1658097154::1677276354::1::::<><>::
+README.md::TextFile::-1::1658109584::0::1::::<><>::
+::res://platformer_controller/::1658109447
+platformer_controller.gd::GDScript::-1::1677276303::0::1::::PlatformerController2D<>CharacterBody2D<>::

@@ -1,32 +1,32 @@
-extends KinematicBody2D
+extends CharacterBody2D
 
 class_name PlatformerController2D
 
 # Set these to the name of your action (in the Input Map)
-export var input_left : String = "move_left"
-export var input_right : String = "move_right"
-export var input_jump : String = "jump"
+@export var input_left : String = "move_left"
+@export var input_right : String = "move_right"
+@export var input_jump : String = "jump"
 
 # The max jump height in pixels (holding jump)
-export var max_jump_height = 150 setget set_max_jump_height
+@export var max_jump_height = 150 : set = set_max_jump_height
 # The minimum jump height (tapping jump)
-export var min_jump_height = 40 setget set_min_jump_height
+@export var min_jump_height = 40 : set = set_min_jump_height
 # The height of your jump in the air
-export var double_jump_height = 100 setget set_double_jump_height
+@export var double_jump_height = 100 : set = set_double_jump_height
 # How long it takes to get to the peak of the jump in seconds
-export var jump_duration = 0.3 setget set_jump_duration
+@export var jump_duration = 0.3 : set = set_jump_duration
 # Multiplies the gravity by this while falling
-export var falling_gravity_multiplier = 1.5
+@export var falling_gravity_multiplier = 1.5
 # Set to 2 for double jump
-export var max_jump_amount = 1
-export var max_acceleration = 4000
-export var friction = 8
-export var can_hold_jump : bool = false
-# You can still jump this many seconds after falling off a ledge
-export var coyote_time : float = 0.1
-# Only neccessary when can_hold_jump is off
+@export var max_jump_amount = 1
+@export var max_acceleration = 4000
+@export var friction = 8
+@export var can_hold_jump : bool = false
+# You can still jump this many seconds after falling unchecked a ledge
+@export var coyote_time : float = 0.1
+# Only neccessary when can_hold_jump is unchecked
 # Pressing jump this many seconds before hitting the ground will still make you jump
-export var jump_buffer : float = 0.1
+@export var jump_buffer : float = 0.1
 
 
 # not used
@@ -45,11 +45,10 @@ var release_gravity_multiplier : float
 var jumps_left : int
 var holding_jump := false
 
-var vel = Vector2()
 var acc = Vector2()
 
-onready var coyote_timer = Timer.new()
-onready var jump_buffer_timer = Timer.new()
+@onready var coyote_timer = Timer.new()
+@onready var jump_buffer_timer = Timer.new()
 
 
 func _init():
@@ -112,18 +111,20 @@ func _physics_process(delta):
 	
 	var gravity = default_gravity
 	
-	if vel.y > 0: # If we are falling
+	if velocity.y > 0: # If we are falling
 		gravity *= falling_gravity_multiplier
 		
-	if not holding_jump and vel.y < 0: # if we released jump and are still rising
+	if not holding_jump and velocity.y < 0: # if we released jump and are still rising
 		if not jumps_left < max_jump_amount - 1: # Always jump to max height when we are using a double jump
 			gravity *= release_gravity_multiplier # multiply the gravity so we have a lower jump
 	
 	acc.y = -gravity
-	vel.x *= 1 / (1 + (delta * friction))
+	velocity.x *= 1 / (1 + (delta * friction))
 	
-	vel += acc * delta
-	vel = move_and_slide(vel, Vector2.UP)
+	velocity += acc * delta
+
+	set_up_direction(Vector2.UP)
+	move_and_slide()
 
 
 
@@ -146,7 +147,7 @@ func calculate_jump_velocity2(p_max_jump_height, p_gravity):
 
 
 func calculate_release_gravity_multiplier(p_jump_velocity, p_min_jump_height, p_gravity):
-	# Calculates the gravity when the key is released based on the minimum jump height and jump velocity
+	# Calculates the gravity when the key is released based checked the minimum jump height and jump velocity
 	# Formula is from this website https://sciencing.com/acceleration-velocity-distance-7779124.html
 	var release_gravity = 0 - pow(p_jump_velocity, 2) / (2 * p_min_jump_height)
 	return release_gravity / p_gravity
@@ -165,15 +166,15 @@ func calculate_speed(p_max_speed, p_friction):
 
 func jump():
 	if jumps_left == max_jump_amount and coyote_timer.is_stopped():
-		# Your first jump must be used when on the ground
-		# If you fall off the ground and then jump you will be using you second jump
+		# Your first jump must be used when checked the ground
+		# If you fall unchecked the ground and then jump you will be using you second jump
 		jumps_left -= 1
 		
 	if jumps_left > 0:
 		if jumps_left < max_jump_amount: # If we are double jumping
-			vel.y = -double_jump_velocity
+			velocity.y = -double_jump_velocity
 		else:
-			vel.y = -jump_velocity
+			velocity.y = -jump_velocity
 		jumps_left -= 1
 	
 	
