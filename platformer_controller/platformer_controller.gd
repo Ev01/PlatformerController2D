@@ -92,6 +92,7 @@ var release_gravity_multiplier : float
 var jumps_left : int
 var holding_jump := false
 
+
 var acc = Vector2()
 
 @onready var coyote_timer = Timer.new()
@@ -114,82 +115,94 @@ func _ready():
 	add_child(jump_buffer_timer)
 	jump_buffer_timer.wait_time = jump_buffer
 	jump_buffer_timer.one_shot = true
-	
+
+
+func _input(event):
+	handle_input()
+
 
 func _physics_process(delta):
-	acc.x = 0
-	
 	if is_on_floor():
 		coyote_timer.start()
 	if not coyote_timer.is_stopped():
 		jumps_left = max_jump_amount
 	
+	if can_jump():
+		jump()
+	
+	var gravity = apply_gravity_multipliers_to(default_gravity)
+	acc.y = -gravity
+	
+	# Apply friction
+	velocity.x *= 1 / (1 + (delta * friction))
+	velocity += acc * delta
+
+	move_and_slide()
+
+
+func handle_input():
+	acc.x = 0
 	if Input.is_action_pressed(input_left):
 		acc.x = -max_acceleration
 	if Input.is_action_pressed(input_right):
 		acc.x = max_acceleration
 	
-	
-	# Check for ground jumps when we can hold jump
-	if can_hold_jump:
-		if Input.is_action_pressed(input_jump):
-			# Dont use double jump when holding down
-			if is_on_floor():
-				jump()
-	
-	# Check for ground jumps when we cannot hold jump
-	if not can_hold_jump:
-		if not jump_buffer_timer.is_stopped() and is_on_floor():
-			jump()
-	
-	# Check for jumps in the air
 	if Input.is_action_just_pressed(input_jump):
 		holding_jump = true
 		jump_buffer_timer.start()
-		
-		# Only jump in the air when press the button down, code above already jumps when we are grounded
-		if not is_on_floor():
-			jump()
-		
-	
 	if Input.is_action_just_released(input_jump):
 		holding_jump = false
-	
-	
-	var gravity = default_gravity
-	
-	if velocity.y > 0: # If we are falling
-		gravity *= falling_gravity_multiplier
-		
-	if not holding_jump and velocity.y < 0: # if we released jump and are still rising
-		if not jumps_left < max_jump_amount - 1: # Always jump to max height when we are using a double jump
-			gravity *= release_gravity_multiplier # multiply the gravity so we have a lower jump
-	
-	acc.y = -gravity
-	velocity.x *= 1 / (1 + (delta * friction))
-	
-	velocity += acc * delta
 
-	set_up_direction(Vector2.UP)
-	move_and_slide()
+
+func can_jump() -> bool:
+	if jumps_left > 0:
+		# Check for ground jumps when we cannot hold jump
+		if not can_hold_jump:
+			if not jump_buffer_timer.is_stopped() and is_on_floor():
+				return true
+		
+		# Check for ground jumps when we can hold jump
+		if can_hold_jump:
+			if Input.is_action_pressed(input_jump):
+				# Dont use double jump when holding down
+				if is_on_floor():
+					return true
+		
+		# Check for jumps in the air
+		if Input.is_action_just_pressed(input_jump):
+			if not is_on_floor():
+				return true
+	
+	return false
 
 
 func jump():
 	if jumps_left == max_jump_amount and coyote_timer.is_stopped():
-		# Your first jump must be used when on the ground
-		# If you fall off the ground and then jump you will be using your second jump
+		# Your first jump must be used when on the ground.
+		# If your first jump is used in the air, an additional jump will be taken away.
 		jumps_left -= 1
 		
-	if jumps_left > 0:
-		if jumps_left < max_jump_amount: # If we are double jumping
-			velocity.y = -double_jump_velocity
-		else:
-			velocity.y = -jump_velocity
-		jumps_left -= 1
-	
+	if jumps_left < max_jump_amount: # If we are double jumping
+		velocity.y = -double_jump_velocity
+	else:
+		velocity.y = -jump_velocity
+	jumps_left -= 1
 	
 	coyote_timer.stop()
 
+
+func apply_gravity_multipliers_to(gravity) -> float:
+	
+	if velocity.y > 0: # If we are falling
+		gravity *= falling_gravity_multiplier
+	
+	# if we released jump and are still rising
+	elif velocity.y < 0:
+		if not holding_jump: 
+			if not jumps_left < max_jump_amount - 1: # Always jump to max height when we are using a double jump
+				gravity *= release_gravity_multiplier # multiply the gravity so we have a lower jump
+	
+	return gravity
 
 
 ## Calculates the desired gravity from jump height and jump duration.  [br]
