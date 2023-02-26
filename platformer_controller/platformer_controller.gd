@@ -2,6 +2,9 @@ extends CharacterBody2D
 
 class_name PlatformerController2D
 
+signal jumped(is_ground_jump: bool)
+
+
 # Set these to the name of your action (in the Input Map)
 ## Name of input action to move left.
 @export var input_left : String = "move_left"
@@ -184,8 +187,11 @@ func jump():
 		
 	if jumps_left < max_jump_amount: # If we are double jumping
 		velocity.y = -double_jump_velocity
+		emit_signal("jumped", false)
 	else:
 		velocity.y = -jump_velocity
+		emit_signal("jumped", true)
+	
 	jumps_left -= 1
 	
 	coyote_timer.stop()
