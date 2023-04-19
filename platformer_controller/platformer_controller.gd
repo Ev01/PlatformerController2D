@@ -171,7 +171,7 @@ func _physics_process(delta):
 	
 	
 	var gravity = apply_gravity_multipliers_to(default_gravity)
-	acc.y = -gravity
+	acc.y = gravity
 	
 	# Apply friction
 	velocity.x *= 1 / (1 + (delta * friction))
@@ -198,9 +198,9 @@ func can_double_jump():
 
 ## Same as is_on_floor(), but also returns true if gravity is reversed and you are on the ceiling
 func is_feet_on_ground():
-	if is_on_floor() and default_gravity <= 0:
+	if is_on_floor() and default_gravity >= 0:
 		return true
-	if is_on_ceiling() and default_gravity >= 0:
+	if is_on_ceiling() and default_gravity <= 0:
 		return true
 	
 	return false
@@ -228,11 +228,11 @@ func jump():
 
 
 func apply_gravity_multipliers_to(gravity) -> float:
-	if velocity.y * -sign(default_gravity) > 0: # If we are falling
+	if velocity.y * sign(default_gravity) > 0: # If we are falling
 		gravity *= falling_gravity_multiplier
 	
 	# if we released jump and are still rising
-	elif velocity.y * -sign(default_gravity) < 0:
+	elif velocity.y * sign(default_gravity) < 0:
 		if not holding_jump: 
 			if not current_jump_type == JumpType.AIR: # Always jump to max height when we are using a double jump
 				gravity *= release_gravity_multiplier # multiply the gravity so we have a lower jump
@@ -244,7 +244,7 @@ func apply_gravity_multipliers_to(gravity) -> float:
 ## Calculates the desired gravity from jump height and jump duration.  [br]
 ## Formula is from [url=https://www.youtube.com/watch?v=hG9SzQxaCm8]this video[/url] 
 func calculate_gravity(p_max_jump_height, p_jump_duration):
-	return (-2 * p_max_jump_height) / pow(p_jump_duration, 2)
+	return (2 * p_max_jump_height) / pow(p_jump_duration, 2)
 
 
 ## Calculates the desired jump velocity from jump height and jump duration.
@@ -262,7 +262,7 @@ func calculate_jump_velocity2(p_max_jump_height, p_gravity):
 ## Calculates the gravity when the key is released based off the minimum jump height and jump velocity.  [br]
 ## Formula is from [url]https://sciencing.com/acceleration-velocity-distance-7779124.html[/url]
 func calculate_release_gravity_multiplier(p_jump_velocity, p_min_jump_height, p_gravity):
-	var release_gravity = -pow(p_jump_velocity, 2) / (2 * p_min_jump_height)
+	var release_gravity = pow(p_jump_velocity, 2) / (2 * p_min_jump_height)
 	return release_gravity / p_gravity
 
 
