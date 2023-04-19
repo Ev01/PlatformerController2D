@@ -20,9 +20,6 @@ const DEFAULT_MIN_JUMP_HEIGHT = 60
 const DEFAULT_DOUBLE_JUMP_HEIGHT = 100
 const DEFAULT_JUMP_DURATION = 0.3
 
-enum JumpType {NONE, GROUND, AIR}
-
-
 var _max_jump_height: float = DEFAULT_MAX_JUMP_HEIGHT
 ## The max jump height in pixels (holding jump).
 @export var max_jump_height: float = DEFAULT_MAX_JUMP_HEIGHT: 
@@ -88,11 +85,6 @@ var _jump_duration: float = DEFAULT_JUMP_DURATION
 @export var jump_buffer : float = 0.1
 
 
-# not used
-var max_speed = 100
-var acceleration_time = 10
-
-
 # These will be calcualted automatically
 # Gravity will be positive if it's going down, and negative if it's going up
 var default_gravity : float
@@ -104,6 +96,8 @@ var release_gravity_multiplier : float
 
 var jumps_left : int
 var holding_jump := false
+
+enum JumpType {NONE, GROUND, AIR}
 var current_jump_type: JumpType = JumpType.NONE
 
 # Used to detect if player just hit the ground
