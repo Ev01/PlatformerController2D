@@ -31,10 +31,6 @@ color = Color(0, 0.443137, 0.027451, 1)
 position = Vector2(-8, 0)
 shape = SubResource("1")
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(-8, -496)
-shape = SubResource("1")
-
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
 position = Vector2(520, 360)
 
