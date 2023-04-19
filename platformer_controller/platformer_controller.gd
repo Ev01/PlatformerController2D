@@ -14,9 +14,15 @@ signal jumped(is_ground_jump: bool)
 @export var input_jump : String = "jump"
 
 
-var _max_jump_height: float = 150
+const DEFAULT_MAX_JUMP_HEIGHT = 150
+const DEFAULT_MIN_JUMP_HEIGHT = 60
+const DEFAULT_DOUBLE_JUMP_HEIGHT = 100
+const DEFAULT_JUMP_DURATION = 0.3
+
+
+var _max_jump_height: float = DEFAULT_MAX_JUMP_HEIGHT
 ## The max jump height in pixels (holding jump).
-@export var max_jump_height: float: 
+@export var max_jump_height: float = DEFAULT_MAX_JUMP_HEIGHT: 
 	get:
 		return _max_jump_height
 	set(value):
@@ -29,9 +35,9 @@ var _max_jump_height: float = 150
 				jump_velocity, min_jump_height, default_gravity)
 			
 
-var _min_jump_height: float = 40
+var _min_jump_height: float = DEFAULT_MIN_JUMP_HEIGHT
 ## The minimum jump height (tapping jump).
-@export var min_jump_height: float: 
+@export var min_jump_height: float = DEFAULT_MIN_JUMP_HEIGHT: 
 	get:
 		return _min_jump_height
 	set(value):
@@ -41,9 +47,9 @@ var _min_jump_height: float = 40
 
 
 
-var _double_jump_height: float = 100
+var _double_jump_height: float = DEFAULT_DOUBLE_JUMP_HEIGHT
 ## The height of your jump in the air.
-@export var double_jump_height: float:
+@export var double_jump_height: float = DEFAULT_DOUBLE_JUMP_HEIGHT:
 	get:
 		return _double_jump_height
 	set(value):
@@ -51,9 +57,9 @@ var _double_jump_height: float = 100
 		double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
 		
 
-var _jump_duration: float = 0.3
+var _jump_duration: float = DEFAULT_JUMP_DURATION
 ## How long it takes to get to the peak of the jump in seconds.
-@export var jump_duration: float:
+@export var jump_duration: float = DEFAULT_JUMP_DURATION:
 	get:
 		return _jump_duration
 	set(value):
@@ -69,8 +75,8 @@ var _jump_duration: float = 0.3
 @export var falling_gravity_multiplier = 1.5
 ## Amount of jumps allowed before needing to touch the ground again. Set to 2 for double jump.
 @export var max_jump_amount = 1
-@export var max_acceleration = 4000
-@export var friction = 8
+@export var max_acceleration = 10000
+@export var friction = 20
 @export var can_hold_jump : bool = false
 ## You can still jump this many seconds after falling off a ledge.
 @export var coyote_time : float = 0.1
