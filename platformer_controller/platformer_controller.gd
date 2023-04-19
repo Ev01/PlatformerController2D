@@ -135,14 +135,10 @@ func _input(_event):
 	if Input.is_action_pressed(input_right):
 		acc.x = max_acceleration
 	
-	if Input.is_action_pressed(input_jump):
-		if can_ground_jump() and can_hold_jump:
-			jump()
-	
 	if Input.is_action_just_pressed(input_jump):
 		holding_jump = true
 		jump_buffer_timer.start()
-		if can_ground_jump() or can_double_jump():
+		if (not can_hold_jump and can_ground_jump()) or can_double_jump():
 			jump()
 		
 	if Input.is_action_just_released(input_jump):
@@ -155,14 +151,20 @@ func _physics_process(delta):
 	if not coyote_timer.is_stopped():
 		jumps_left = max_jump_amount
 	
+
 	# Check if we just hit the ground this frame
 	if not _was_on_ground and is_feet_on_ground():
 		current_jump_type = JumpType.NONE
-		if not jump_buffer_timer.is_stopped(): 
+		if not jump_buffer_timer.is_stopped() and not can_hold_jump: 
 			jump()
 		
 		hit_ground.emit()
 	
+	
+	# Cannot do this in _input because it needs to be checked every frame
+	if Input.is_action_pressed(input_jump):
+		if can_ground_jump() and can_hold_jump:
+			jump()
 	
 	var gravity = apply_gravity_multipliers_to(default_gravity)
 	acc.y = gravity
