@@ -59,6 +59,7 @@ shape = SubResource("3")
 [node name="PlatformerController2D" type="CharacterBody2D" parent="."]
 position = Vector2(288, 320)
 script = ExtResource("1")
+min_jump_height = -60.0
 
 [node name="icon" type="Sprite2D" parent="PlatformerController2D"]
 texture = ExtResource("2")

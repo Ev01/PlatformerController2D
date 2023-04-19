@@ -116,11 +116,6 @@ func _init():
 	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
 	release_gravity_multiplier = calculate_release_gravity_multiplier(
 		jump_velocity, min_jump_height, default_gravity)
-		
-	print("Jump velocity = ", jump_velocity)
-	print("Double Jump velocity = ", double_jump_velocity)
-	print("release_gravity mult = ", release_gravity_multiplier)
-	print("Default gravity = ", default_gravity)
 
 
 func _ready():
