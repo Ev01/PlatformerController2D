@@ -128,7 +128,7 @@ func _ready():
 
 
 func _input(event):
-	handle_input()
+	handle_input(event)
 
 
 func _physics_process(delta):
@@ -150,7 +150,7 @@ func _physics_process(delta):
 	move_and_slide()
 
 
-func handle_input():
+func handle_input(_event):
 	acc.x = 0
 	if Input.is_action_pressed(input_left):
 		acc.x = -max_acceleration
