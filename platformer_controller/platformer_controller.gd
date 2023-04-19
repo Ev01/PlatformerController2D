@@ -105,9 +105,16 @@ var acc = Vector2()
 func _init():
 	default_gravity = calculate_gravity(max_jump_height, jump_duration)
 	jump_velocity = calculate_jump_velocity(max_jump_height, jump_duration)
+	
+	
 	double_jump_velocity = calculate_jump_velocity2(double_jump_height, default_gravity)
 	release_gravity_multiplier = calculate_release_gravity_multiplier(
 		jump_velocity, min_jump_height, default_gravity)
+		
+	print("Jump velocity = ", jump_velocity)
+	print("Double Jump velocity = ", double_jump_velocity)
+	print("release_gravity mult = ", release_gravity_multiplier)
+	print("Default gravity = ", default_gravity)
 
 
 func _ready():
@@ -125,7 +132,7 @@ func _input(event):
 
 
 func _physics_process(delta):
-	if is_on_floor():
+	if is_feet_on_ground():
 		coyote_timer.start()
 	if not coyote_timer.is_stopped():
 		jumps_left = max_jump_amount
@@ -147,6 +154,7 @@ func handle_input():
 	acc.x = 0
 	if Input.is_action_pressed(input_left):
 		acc.x = -max_acceleration
+	
 	if Input.is_action_pressed(input_right):
 		acc.x = max_acceleration
 	
@@ -155,28 +163,43 @@ func handle_input():
 		jump_buffer_timer.start()
 	if Input.is_action_just_released(input_jump):
 		holding_jump = false
+	
+	
+
 
 
 func can_jump() -> bool:
 	if jumps_left > 0:
 		# Check for ground jumps when we cannot hold jump
 		if not can_hold_jump:
-			if not jump_buffer_timer.is_stopped() and is_on_floor():
+			if not jump_buffer_timer.is_stopped() and is_feet_on_ground():
 				return true
 		
 		# Check for ground jumps when we can hold jump
 		if can_hold_jump:
 			if Input.is_action_pressed(input_jump):
 				# Dont use double jump when holding down
-				if is_on_floor():
+				if is_feet_on_ground():
 					return true
 		
 		# Check for jumps in the air
 		if Input.is_action_just_pressed(input_jump):
-			if not is_on_floor():
+			if not is_feet_on_ground():
+				print("air jump")
 				return true
 	
 	return false
+
+
+## Same as is_on_floor(), but also returns true if gravity is reversed and you are on the ceiling
+func is_feet_on_ground():
+	if is_on_floor() and default_gravity <= 0:
+		return true
+	if is_on_ceiling() and default_gravity >= 0:
+		return true
+	
+	return false
+	
 
 
 func jump():
@@ -199,11 +222,11 @@ func jump():
 
 func apply_gravity_multipliers_to(gravity) -> float:
 	
-	if velocity.y > 0: # If we are falling
+	if velocity.y * -sign(default_gravity) > 0: # If we are falling
 		gravity *= falling_gravity_multiplier
 	
 	# if we released jump and are still rising
-	elif velocity.y < 0:
+	elif velocity.y * -sign(default_gravity) < 0:
 		if not holding_jump: 
 			if not jumps_left < max_jump_amount - 1: # Always jump to max height when we are using a double jump
 				gravity *= release_gravity_multiplier # multiply the gravity so we have a lower jump
@@ -226,13 +249,13 @@ func calculate_jump_velocity(p_max_jump_height, p_jump_duration):
 ## Formula from 
 ## [url]https://sciencing.com/acceleration-velocity-distance-7779124.html#:~:text=in%20every%20step.-,Starting%20from%3A,-v%5E2%3Du[/url]
 func calculate_jump_velocity2(p_max_jump_height, p_gravity):
-	return sqrt(-2 * p_gravity * p_max_jump_height)
+	return sqrt(abs(2 * p_gravity * p_max_jump_height)) * sign(p_max_jump_height)
 
 
 ## Calculates the gravity when the key is released based off the minimum jump height and jump velocity.  [br]
 ## Formula is from [url]https://sciencing.com/acceleration-velocity-distance-7779124.html[/url]
 func calculate_release_gravity_multiplier(p_jump_velocity, p_min_jump_height, p_gravity):
-	var release_gravity = 0 - pow(p_jump_velocity, 2) / (2 * p_min_jump_height)
+	var release_gravity = -pow(p_jump_velocity, 2) / (2 * p_min_jump_height)
 	return release_gravity / p_gravity
 
 

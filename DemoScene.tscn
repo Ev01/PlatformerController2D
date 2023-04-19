@@ -31,6 +31,10 @@ color = Color(0, 0.443137, 0.027451, 1)
 position = Vector2(-8, 0)
 shape = SubResource("1")
 
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-8, -496)
+shape = SubResource("1")
+
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
 position = Vector2(520, 360)
 
@@ -59,11 +63,14 @@ shape = SubResource("3")
 [node name="PlatformerController2D" type="CharacterBody2D" parent="."]
 position = Vector2(288, 320)
 script = ExtResource("1")
-max_jump_height = 150.0
-min_jump_height = 60.0
-jump_duration = 0.25
+max_jump_height = -150.0
+min_jump_height = -60.0
+double_jump_height = -100.0
+jump_duration = 0.5
+max_jump_amount = 3
 max_acceleration = 10000
 friction = 20
+can_hold_jump = true
 
 [node name="icon" type="Sprite2D" parent="PlatformerController2D"]
 texture = ExtResource("2")
