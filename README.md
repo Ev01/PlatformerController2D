@@ -4,6 +4,10 @@ A 2D platformer class for godot.
 
 ## Changelog
 
+## Version 2.0.1
+
+- Removed the .godot and .import folders from the repository
+
 ### Version 2.0
 
 - Updated to Godot 4.0
