@@ -105,6 +105,8 @@ var _was_on_ground: bool
 
 var acc = Vector2()
 
+@onready var is_coyote_time_enabled = coyote_time > 0
+@onready var is_jump_buffer_enabled = jump_buffer > 0
 @onready var coyote_timer = Timer.new()
 @onready var jump_buffer_timer = Timer.new()
 
@@ -118,13 +120,15 @@ func _init():
 
 
 func _ready():
-	add_child(coyote_timer)
-	coyote_timer.wait_time = coyote_time
-	coyote_timer.one_shot = true
+	if is_coyote_time_enabled:
+		add_child(coyote_timer)
+		coyote_timer.wait_time = coyote_time
+		coyote_timer.one_shot = true
 	
-	add_child(jump_buffer_timer)
-	jump_buffer_timer.wait_time = jump_buffer
-	jump_buffer_timer.one_shot = true
+	if is_jump_buffer_enabled:
+		add_child(jump_buffer_timer)
+		jump_buffer_timer.wait_time = jump_buffer
+		jump_buffer_timer.one_shot = true
 
 
 func _input(_event):
@@ -137,7 +141,7 @@ func _input(_event):
 	
 	if Input.is_action_just_pressed(input_jump):
 		holding_jump = true
-		jump_buffer_timer.start()
+		start_jump_buffer_timer()
 		if (not can_hold_jump and can_ground_jump()) or can_double_jump():
 			jump()
 		
@@ -146,13 +150,15 @@ func _input(_event):
 
 
 func _physics_process(delta):
+	if is_coyote_timer_running() or current_jump_type == JumpType.NONE:
+		jumps_left = max_jump_amount
 	if is_feet_on_ground() and current_jump_type == JumpType.NONE:
-		coyote_timer.start()
+		start_coyote_timer()
 		
 	# Check if we just hit the ground this frame
 	if not _was_on_ground and is_feet_on_ground():
 		current_jump_type = JumpType.NONE
-		if not jump_buffer_timer.is_stopped() and not can_hold_jump: 
+		if is_jump_buffer_timer_running() and not can_hold_jump: 
 			jump()
 		
 		hit_ground.emit()
@@ -175,17 +181,45 @@ func _physics_process(delta):
 	move_and_slide()
 
 
+## Use this instead of coyote_timer.start() to check if the coyote_timer is enabled first
+func start_coyote_timer():
+	if is_coyote_time_enabled:
+		coyote_timer.start()
+
+## Use this instead of jump_buffer_timer.start() to check if the jump_buffer is enabled first
+func start_jump_buffer_timer():
+	if is_jump_buffer_enabled:
+		jump_buffer_timer.start()
+
+func is_coyote_timer_running():
+	if (is_coyote_time_enabled and not coyote_timer.is_stopped()):
+		return true
+	
+	return false
+
+func is_jump_buffer_timer_running():
+	if is_jump_buffer_enabled and not jump_buffer_timer.is_stopped():
+		return true
+	
+	return false
+
+
 func can_ground_jump() -> bool:
 	if jumps_left > 0 and is_feet_on_ground():
 		return true
-	elif not coyote_timer.is_stopped():
+	elif is_coyote_timer_running():
 		return true
 	
 	return false
 
 
 func can_double_jump():
-	if jumps_left > 0 and not is_feet_on_ground():
+	if jumps_left <= 1 and jumps_left == max_jump_amount:
+		# Special case where you've fallen off a cliff and only have 1 jump. You cannot use your
+		# first jump in the air
+		return false
+	
+	if jumps_left > 0 and not is_feet_on_ground() and coyote_timer.is_stopped():
 		return true
 	
 	return false
@@ -201,25 +235,34 @@ func is_feet_on_ground():
 	return false
 
 
+## Perform a ground jump, or a double jump if the character is in the air
 func jump():
-	if jumps_left == max_jump_amount and coyote_timer.is_stopped():
+	if can_double_jump():
+		double_jump()
+	else:
+		ground_jump()
+
+
+## Perform a double jump without checking if the player is able to.
+func double_jump():
+	if jumps_left == max_jump_amount:
 		# Your first jump must be used when on the ground.
 		# If your first jump is used in the air, an additional jump will be taken away.
 		jumps_left -= 1
-		
-	if not is_feet_on_ground() and coyote_timer.is_stopped(): # If we are double jumping
-		velocity.y = -double_jump_velocity
-		current_jump_type = JumpType.AIR
-		jumped.emit(false)
-	else:
-		velocity.y = -jump_velocity
-		current_jump_type = JumpType.GROUND
-		jumped.emit(true)
 	
+	velocity.y = -double_jump_velocity
+	current_jump_type = JumpType.AIR
 	jumps_left -= 1
-	
-	coyote_timer.stop()
+	jumped.emit(false)
 
+
+## Perform a ground jump without checking if the player is able to.
+func ground_jump():
+	velocity.y = -jump_velocity
+	current_jump_type = JumpType.GROUND
+	jumps_left -= 1
+	coyote_timer.stop()
+	jumped.emit(true)
 
 
 func apply_gravity_multipliers_to(gravity) -> float:
@@ -270,6 +313,4 @@ func calculate_friction(time_to_max):
 ## Formula from [url]https://www.reddit.com/r/gamedev/comments/bdbery/comment/ekxw9g4/?utm_source=share&utm_medium=web2x&context=3[/url]
 func calculate_speed(p_max_speed, p_friction):
 	return (p_max_speed / p_friction) - p_max_speed
-
-
 
