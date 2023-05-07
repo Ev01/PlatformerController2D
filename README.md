@@ -4,6 +4,16 @@ A 2D platformer class for godot.
 
 ## Changelog
 
+## Version 2.0.2
+
+- Fixed bug where falling off a cliff would give an extra jump
+
+- Fixed bug where setting coyote_time or jump_buffer to 0 would raise an error
+
+- Added ground_jump and double_jump functions
+
+- Added separate functions for starting the jump_buffer or coyote timers and checking if they are running
+
 ## Version 2.0.1
 
 - Removed the .godot and .import folders from the repository
