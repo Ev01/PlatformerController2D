@@ -98,6 +98,7 @@ var jumps_left : int
 var holding_jump := false
 
 enum JumpType {NONE, GROUND, AIR}
+## The type of jump the player is performing. Is JumpType.NONE if they player is on the ground.
 var current_jump_type: JumpType = JumpType.NONE
 
 # Used to detect if player just hit the ground
@@ -105,6 +106,7 @@ var _was_on_ground: bool
 
 var acc = Vector2()
 
+# coyote_time and jump_buffer must be above zero to work. Otherwise, godot will throw an error.
 @onready var is_coyote_time_enabled = coyote_time > 0
 @onready var is_jump_buffer_enabled = jump_buffer > 0
 @onready var coyote_timer = Timer.new()
@@ -191,12 +193,16 @@ func start_jump_buffer_timer():
 	if is_jump_buffer_enabled:
 		jump_buffer_timer.start()
 
+## Use this instead of `not coyote_timer.is_stopped()`. This will always return false if 
+## the coyote_timer is disabled
 func is_coyote_timer_running():
 	if (is_coyote_time_enabled and not coyote_timer.is_stopped()):
 		return true
 	
 	return false
 
+## Use this instead of `not jump_buffer_timer.is_stopped()`. This will always return false if 
+## the jump_buffer_timer is disabled
 func is_jump_buffer_timer_running():
 	if is_jump_buffer_enabled and not jump_buffer_timer.is_stopped():
 		return true
@@ -205,7 +211,7 @@ func is_jump_buffer_timer_running():
 
 
 func can_ground_jump() -> bool:
-	if jumps_left > 0 and is_feet_on_ground():
+	if jumps_left > 0 and current_jump_type == JumpType.NONE:
 		return true
 	elif is_coyote_timer_running():
 		return true
@@ -235,7 +241,7 @@ func is_feet_on_ground():
 	return false
 
 
-## Perform a ground jump, or a double jump if the character is in the air
+## Perform a ground jump, or a double jump if the character is in the air.
 func jump():
 	if can_double_jump():
 		double_jump()
