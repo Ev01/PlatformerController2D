@@ -152,7 +152,7 @@ func _input(_event):
 
 
 func _physics_process(delta):
-	if is_coyote_timer_running() or current_jump_type == JumpType.NONE:
+	if is_coyote_timer_running() or (is_feet_on_ground() and current_jump_type == JumpType.NONE):
 		jumps_left = max_jump_amount
 	if is_feet_on_ground() and current_jump_type == JumpType.NONE:
 		start_coyote_timer()
@@ -160,6 +160,7 @@ func _physics_process(delta):
 	# Check if we just hit the ground this frame
 	if not _was_on_ground and is_feet_on_ground():
 		current_jump_type = JumpType.NONE
+		jumps_left = max_jump_amount
 		if is_jump_buffer_timer_running() and not can_hold_jump: 
 			jump()
 		
@@ -211,9 +212,10 @@ func is_jump_buffer_timer_running():
 
 
 func can_ground_jump() -> bool:
-	if jumps_left > 0 and current_jump_type == JumpType.NONE:
-		return true
-	elif is_coyote_timer_running():
+	if jumps_left <= 0:
+		return false
+	
+	if (current_jump_type == JumpType.NONE and is_feet_on_ground()) or is_coyote_timer_running():
 		return true
 	
 	return false
