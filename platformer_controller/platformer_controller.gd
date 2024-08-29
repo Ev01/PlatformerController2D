@@ -245,7 +245,7 @@ func is_feet_on_ground():
 func jump():
 	if can_double_jump():
 		double_jump()
-	elif is_feet_on_ground():
+	elif can_ground_jump():
 		ground_jump()
 
 
